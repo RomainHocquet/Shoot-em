@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class PlayerStats : MonoBehaviour
 {
+    private Color myColor;
     public float maxHealth;
     // [HideInInspector]
     public float healthPoint;//Should not be set in unity
@@ -23,6 +24,11 @@ public class PlayerStats : MonoBehaviour
 
     }
 
+    public void UpdateColor(Color newColor)
+    {
+       myColor = newColor;
+       GetComponentInChildren<Light>().color = myColor;
+    }
     public void takeDamage(float damageTaken, PlayerStats attackingPlayer)
     {
         healthPoint -= damageTaken;

@@ -5,10 +5,11 @@ using static UnityEngine.InputSystem.InputAction;
 
 public class PlayerActionsSC : MonoBehaviour
 {
+    public GameManager gameManager; // Local variable for the Game Manager
     private CharacterController controller;
     private Camera mainCamera; // Assign your main camera in the Inspector.
     public PlayerStats myPlayerStats;
-    private GunStats myGunStats;
+    private GunContainerSC myGunContainer;
 
     //Movement
     public float moveSpeed = 5f;        // Movement speed
@@ -29,8 +30,23 @@ public class PlayerActionsSC : MonoBehaviour
     private float fireRate; // The rate of fire (in seconds per shot)
     private float lastShotTime = 0; // When was the last shot shooted
     private Coroutine firingCoroutine; // Reference to the firing coroutine
+    private float spreadAngle; // Spread amount in degrees
+    // private AudioClip fireSound;  // Audio clip to play when firing
+    private AudioSource audioSource;
+
+    //Interact
+    public float interactionRadius = 5f; // Radius around the player to detect interactables
+    public string interactableTag = "Interactable"; // Tag for interactable objects
 
 
+
+
+
+    void Awake()
+    {
+
+
+    }
 
 
     void Start()
@@ -39,11 +55,10 @@ public class PlayerActionsSC : MonoBehaviour
         controller = GetComponent<CharacterController>();
         mainCamera = Camera.main;
 
-        myGunStats = GetComponentInChildren<GunStats>();
+        myGunContainer = GetComponentInChildren<GunContainerSC>();
+        UpdateGun();
 
-        muzzle = myGunStats.muzzle;
-        bullet = myGunStats.bullet;
-        fireRate = myGunStats.fireRate;
+        gameManager.AddPlayer(myPlayerStats);
     }
 
     public void OnMove(CallbackContext context)
@@ -113,11 +128,81 @@ public class PlayerActionsSC : MonoBehaviour
 
     public void fireBullet()
     {
-        Instantiate(bullet, muzzle.transform.position, muzzle.transform.rotation);
+
+        // // Play the audio when firing the bullet
+        // if (audioSource != null && audioSource != null)
+        // {
+        audioSource.Play();
+        // }
+
+        // Calculate random spread rotation
+        Quaternion randomSpread = Quaternion.Euler(
+            0, // X axis
+            Random.Range(-spreadAngle, spreadAngle), // Random angle for Y axis
+            0  // Z axis 
+        );
+
+        // Apply random spread to the original rotation
+        Quaternion bulletRotation = muzzle.transform.rotation * randomSpread;
+
+        Instantiate(bullet, muzzle.transform.position, bulletRotation);
         bullet.GetComponent<BulletSC>().owner = myPlayerStats;
     }
 
 
+    public void OnInteract(CallbackContext context)
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, interactionRadius); // Get all colliders within range
+        Collider closestCollider = null;
+        float closestDistance = Mathf.Infinity;
+
+        // Loop through all detected colliders
+        foreach (Collider collider in colliders)
+        {
+            // Check if collider is tagged as "Interactable"
+            if (collider.CompareTag(interactableTag))
+            {
+                float distanceToCenter = Vector3.Distance(transform.position, collider.transform.position); // Calculate distance to center
+
+                // Find the closest collider
+                if (distanceToCenter < closestDistance)
+                {
+                    closestDistance = distanceToCenter;
+                    closestCollider = collider;
+                }
+            }
+        }
+
+        // If there is a closest interactable object, interact with it
+        if (closestCollider != null)
+        {
+            GunGroundSC gunContainer = closestCollider.gameObject.GetComponent<GunGroundSC>();
+            GameObject pickedUpGun = gunContainer.gunPrefab;
+
+            myGunContainer.ReplaceGun(pickedUpGun);
+            UpdateGun();
+            gunContainer.GetPickedUp();
+        }
+
+    }
+
+    /*
+    Apply the value of the shooting according to the gun stats
+    */
+    public void UpdateGun()
+    {
+        GunStats gunStats = myGunContainer.myGunStats;
+        Debug.Log(gunStats);
+        UpdateGun(gunStats.fireRate, gunStats.bullet, gunStats.spreadAngle, gunStats.audioSource, gunStats.muzzle);
+    }
+    public void UpdateGun(float fireRate, GameObject bullet, float spreadAngle, AudioSource audioSource, GameObject muzzle)
+    {
+        this.fireRate = fireRate;
+        this.bullet = bullet;
+        this.spreadAngle = spreadAngle;
+        this.audioSource = audioSource;
+        this.muzzle = muzzle;
+    }
     void FixedUpdate()
     {
         // // Read the input vector from the new input system
