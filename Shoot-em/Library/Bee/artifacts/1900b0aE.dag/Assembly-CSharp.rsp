@@ -397,6 +397,7 @@
 "Assets/Script/PlayerActionsSC.cs"
 "Assets/Script/PlayerStats.cs"
 "Assets/Script/UI/HealthBar.cs"
+"Assets/Script/UI/PlayerTextSC.cs"
 -langversion:9.0
 
 /deterministic

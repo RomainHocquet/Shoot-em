@@ -11,4 +11,13 @@ public class HealthBar : MonoBehaviour
     {
         healthbar.fillAmount = fraction;
     }
+    void Update()
+    {
+        // Get the main camera
+        Camera mainCamera = Camera.main;
+
+        // Make the GameObject look at the camera
+        transform.LookAt(mainCamera.transform);
+    }
+
 }

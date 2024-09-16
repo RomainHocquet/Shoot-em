@@ -78,11 +78,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd9b3431663392643b91979d14c15e88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  muzzle: {fileID: 1245308931278058248}
+  muzzles:
+  - {fileID: 1245308931278058248}
   bullet: {fileID: 4326850286147581034, guid: 336ddc92951f5ab4b8a5f78a428b6efd, type: 3}
   fireRate: 0.1
   spreadAngle: 15
   audioSource: {fileID: -6078376502317098724}
+  damageMultipler: 0.8
+  speedMultipler: 1
 --- !u!82 &-6078376502317098724
 AudioSource:
   m_ObjectHideFlags: 0

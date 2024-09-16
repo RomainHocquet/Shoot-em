@@ -12,10 +12,12 @@ public class GunGroundSC : MonoBehaviour
     public GameObject gunPrefab;
     // Position to spawn the gun
     public Transform spawnPosition;
+    public GameManager gameManager;
 
     // Start is called before the first frame update
     void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         SpawnRandomGun();
     }
 
@@ -33,10 +35,14 @@ public class GunGroundSC : MonoBehaviour
         int randomIndex = Random.Range(0, gunPrefabs.Length);
 
         // Instantiate the selected gun at the desired position and rotation
-         gunPrefab = Instantiate(gunPrefabs[randomIndex], spawnPosition.transform);
+        gunPrefab = Instantiate(gunPrefabs[randomIndex], spawnPosition.transform);
     }
 
-    public void GetPickedUp(){
+    public void GetPickedUp()
+    {
+        
+        Debug.Log("picking up a weapon");
+        gameManager.WeaponGetPickedUp();
         Destroy(gameObject);
     }
 

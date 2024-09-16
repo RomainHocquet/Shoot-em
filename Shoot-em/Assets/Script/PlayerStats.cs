@@ -5,12 +5,13 @@ using UnityEngine.UI;
 
 public class PlayerStats : MonoBehaviour
 {
-    private Color myColor;
+    public Color myColor;
     public float maxHealth;
     // [HideInInspector]
     public float healthPoint;//Should not be set in unity
     public GameManager gameManager;
     public Image healthbar;
+    public int playerNumber;//Assigned by gameManager
     // Start is called before the first frame update
     void Start()
     {

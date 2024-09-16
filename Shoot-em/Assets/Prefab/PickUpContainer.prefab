@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 4608522574694443254}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.533368, y: 1.1305208, z: -1.8681091}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -75,7 +75,9 @@ MonoBehaviour:
   - {fileID: 5388283218452270201, guid: c3b6e9105371110439744e8200d33f1d, type: 3}
   - {fileID: 5388283218452270201, guid: 09818fc40efe5e74da693cd83d6472fb, type: 3}
   - {fileID: 5388283218452270201, guid: 91214616dd1a8a7429181bef70a7c68a, type: 3}
+  gunPrefab: {fileID: 0}
   spawnPosition: {fileID: 6736026247815475521}
+  gameManager: {fileID: 0}
 --- !u!108 &3039033114819137898
 Light:
   m_ObjectHideFlags: 0

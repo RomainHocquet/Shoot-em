@@ -1,8 +1,11 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -32,10 +35,14 @@ public class GameManager : MonoBehaviour
     public float respawnTime = 5.0f;
     public int killScoreValue = 1;
     public List<GameObject> spawnPoints;
+    private int numberMaxOfPlayer;
+    public GameObject playerTexts; //GameObject containing the list of players Text
 
-    private void Start()
+    public GameObject[] weaponsSpawnPoints;
+    public GameObject weaponPickUpContainer;
+    private void Awake()
     {
-
+        numberMaxOfPlayer = colorList.Count;
     }
 
     public void AddPlayer(PlayerStats playerStats)
@@ -48,6 +55,7 @@ public class GameManager : MonoBehaviour
         if (colorList.Count > 0)
         {
             Color assignedColor = colorList[0];
+            playerStats.playerNumber = numberMaxOfPlayer - colorList.Count;
 
             playerColors.Add(player, assignedColor);
             colorList.RemoveAt(0);
@@ -55,17 +63,53 @@ public class GameManager : MonoBehaviour
             {
                 playerStats.UpdateColor(assignedColor);
             }
+            AddTextField(playerStats);
         }
         else
         {
             Debug.LogWarning("No color left to give to new player");
         }
 
+    }
 
 
+    private void AddTextField(PlayerStats newPlayerStats)
+    {
+        PlayerTextSC playerTextSC = playerTexts.GetComponent<PlayerTextSC>();
+        
+        GameObject playerText = playerTextSC.getAvailablePlayerTextSpot();
 
 
+        Image playerTextBackGround = playerText.GetComponent<Image>();
+        Color backgroundColor = playerTextBackGround.color;
+        backgroundColor = newPlayerStats.myColor;
+        // Change alpha to 14 (out of 255)
+        float newAlpha = 14f / 255f;
+        backgroundColor.a = newAlpha;
+        playerTextBackGround.color = backgroundColor;
 
+        TextMeshPro textComponent = playerText.GetComponentInChildren<TextMeshPro>();
+        // textComponent.text = "Player " + newPlayerStats.playerNumber + "\n score : 0";
+        string finalText = "Player " + (newPlayerStats.playerNumber + 1) + "\n";
+        finalText += "Score : 0" + "\n";
+        // finalText += "Ammo : X" + "\n";
+        // finalText += "Bonus :  Sample Bonus name" + "\n";
+        textComponent.text = finalText;
+
+    }
+
+    private void UpdatePlayerText(PlayerStats newPlayerStats)
+    {
+
+        PlayerTextSC playerTextSC = playerTexts.GetComponent<PlayerTextSC>();
+        GameObject playerText = playerTextSC.GetPlayer(newPlayerStats.playerNumber);
+        TextMeshPro textComponent = playerText.GetComponentInChildren<TextMeshPro>();
+
+        string finalText = "Player " + (newPlayerStats.playerNumber + 1) + "\n";
+        finalText += "Score : " + playerScores[newPlayerStats] + "\n";
+        // finalText += "Ammo : X" + "\n";
+        // finalText += "Bonus :  Sample Bonus name" + "\n";
+        textComponent.text = finalText;
     }
 
     public void AddScore(PlayerStats scoringPlayer, int points)
@@ -82,7 +126,8 @@ public class GameManager : MonoBehaviour
             playerScores[scoringPlayer] = points;
         }
 
-        // UpdateScoreUI(scoringPlayer);
+        UpdatePlayerText(scoringPlayer);
+
     }
 
     public void AddScoreKill(PlayerStats scoringPlayer)
@@ -108,6 +153,19 @@ public class GameManager : MonoBehaviour
 
         PlayerStats respawningPlayStats = respawningPlayer.GetComponent<PlayerStats>();
         respawningPlayStats.SetHealth(100, true);
+    }
+
+    //TODO: add a timer to the weapon spawn
+    public void WeaponGetPickedUp()
+    {
+
+        SpawnAWeapon();
+    }
+    private void SpawnAWeapon()
+    {
+        Debug.Log("spawnning a weapon");
+        int weaponPositionIndex = Random.Range(0, weaponsSpawnPoints.Length);
+        Instantiate(weaponPickUpContainer, weaponsSpawnPoints[weaponPositionIndex].transform);
     }
 
     private void EndGame()

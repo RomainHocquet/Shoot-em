@@ -30,13 +30,17 @@ public class BulletSC : MonoBehaviour
     {
         GameObject objectCollided = collision.gameObject;
 
+        // Ignore collision if the other object is a bullet
+        if (objectCollided.CompareTag("Bullet"))
+        {
+            Physics.IgnoreCollision(collision.collider, GetComponent<Collider>());
+            return; // Exit to prevent further logic for this collision
+        }
 
-        // Optional: Add logic to ignore certain collisions (e.g., the bullet's owner)
         if (objectCollided.CompareTag("Player"))
         {
-
             PlayerStats collidedPlayerStats = objectCollided.GetComponent<PlayerStats>();
-            collidedPlayerStats.takeDamage(damage,owner);
+            collidedPlayerStats.takeDamage(damage, owner);
         }
 
         // Destroy the bullet
